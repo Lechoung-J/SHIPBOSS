@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Local task state and evidence
+.delegate/
+
+# Dependencies and build output
+node_modules/
+artifacts/
+dist/
+build/
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs and temporary files
+*.log
+*.tmp
+.env
+.env.*
