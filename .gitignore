@@ -9,6 +9,7 @@ node_modules/
 artifacts/
 dist/
 build/
+.pnpm-store/
 
 # Editor / IDE
 .idea/

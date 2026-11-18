@@ -27,19 +27,23 @@
 
 ---
 
-## 1. Role Division: Three Layers, Asymmetric
+## 1. Roles, responsibilities and context
+
+The Boss sets intent and accepts results. The PM coordinates; the engineer retains implementation context; each formal verifier starts with a fresh context and an independent snapshot. The scribe preserves sourced discussion and feedback. Tools, models and job types do not determine these roles. See [roles and context](references/roles-context.md).
 
 | Role | What it cares about | Information it holds | Decision authority | Hard prohibitions |
 |---|---|---|---|---|
 | **Boss** | What to do, whether it is worth it, when to stop | Intent, priorities, budget, final result | Accept/reject the final delivery; stop tasks; adjust priorities | Does not directly change the spec, does not directly direct the engineer to bypass the PM |
-| **Product manager (PM)** | How to break it down, when to dispatch, whether it passes | All specs, schedule, verification conclusions, evidence index | Define and change ACs; schedule; dispatch; decide PASS/FAIL; initiate rework | Does not both implement and perform final verification within the same task; does not relax ACs in exchange for a pass |
-| **Engineer** | How to implement | Its own spec, workspace, test output | Implementation approach; raise spec questions; submit deliverables | Does not change ACs; does not issue its own verification conclusion; does not hide failures |
+| **Product manager (PM)** | How to break it down, when to dispatch, whether it passes | All specs, schedule, verification conclusions, evidence index | Define and version ACs; schedule and dispatch; preserve the verifier's verdict; initiate rework | Does not both implement and perform final verification within the same task; does not relax ACs in exchange for a pass |
+| **Engineer** | How to implement | Its spec, workspace, implementation history and self-test output | Implementation approach; raise spec questions; submit deliverables | Does not change ACs; does not issue its own verification conclusion; does not hide failures |
+| **Verifier** | Whether the delivered revision satisfies requirements | Fresh context with requirements, baseline, delivery and independently obtained evidence | Issue PASS/FAIL/BLOCKED for that revision | Does not inherit PM/implementation chat, change source, or accept its own implementation |
+| **Scribe** | Preserve discussions and feedback | Sourced conversation and existing project notes | Extract and merge records for PM review | Does not grant PASS, invent decisions, or promote global skills on its own |
 
 ### The three lines of asymmetry
 
 1. **Information asymmetry**: The Boss reads only a one-page conclusion and an evidence index; the PM reads the spec and verification evidence; the engineer reads implementation details. No layer needs to copy all the context of the layer below.
 2. **Authority asymmetry**: The Boss can stop the project, the PM can reject, and the engineer can only submit. **Whoever writes the code cannot approve their own code.**
-3. **Context asymmetry**: The engineer's context is the dirtiest (source code, logs, trial and error), the PM's context should be the cleanest (spec, status, evidence pointers), and the Boss's context is the shortest (conclusion, risks, next step).
+3. **Context separation**: The engineer retains its implementation history. The PM retains project decisions. The verifier starts fresh with requirements and delivery evidence, not the PM's or engineer's conversation. The Boss receives a concise result.
 
 ### Minimum division rules
 
@@ -78,7 +82,7 @@ Verification is not asking the engineer to confirm again; it is re-judging by an
 
 Independence includes at least:
 
-1. **Context independence**: The verifier did not participate in implementation, does not inherit the engineer's conversation context, and does not read the engineer's self-assessment as the basis for a conclusion (it may read their evidence).
+1. **Context independence**: The verifier did not participate in implementation, does not inherit the PM's or engineer's conversation context, and does not read the engineer's self-assessment as the basis for a conclusion (it may read their evidence).
 2. **Workspace independence**: The verifier uses a fresh workspace or read-only snapshot of the commit delivered by the engineer, and does not share a mutable directory with the engineer.
 3. **Read-only authority**: By default the verifier cannot change code, tests, or the spec, and cannot commit. When tests must be run, it may only execute commands on a whitelist.
 4. **Tool whitelist**: When dispatching verification, the allowed tools and forbidden actions must be listed; "I will be careful to only read" does not count as independence.
@@ -110,6 +114,8 @@ This section turns principles into observable judgments. **If you cannot point t
 | V-14 | Scope is controlled | Deliverables match non-goals | Opportunistically refactoring unrelated modules; introducing undeclared dependencies; modifying read-only source material; expanding the workspace | Diff, dependency changes, file list |
 | V-15 | Conclusions are traceable | Every PASS/FAIL points to evidence | Conclusions are only adjectives; no evidence links; failed items have no owner and no next step | Verification report |
 | V-16 | Dispatch is traceable | `.delegate/<TASK-ID>/dispatch.log` appends, on each occasion, the complete command actually executed (host, all flags, cwd, baseline, time), so another person can reproduce it exactly | `.delegate/<TASK-ID>/dispatch.log` does not exist, or a record lacks cwd / baseline / all flags; a dispatch leaves only "dispatched / engineer is running"; chat records are used instead; multiple dispatches for the same task leave only the last entry; afterwards it is impossible to tell whether "can't run the tests" was due to missing flags, permission blocking, or insufficient resources | `dispatch.log`, session records, shell history |
+| V-17 | Process does not eat the work | Task declares `tier`; `direct` tasks skip the full flow; every report names the artifact and the command that proves it | A one-hour task went through spec + dispatch + independent verification + handoff, or a `direct` task quietly grew into a full ticket; a round produced documents but no artifact change and nobody cut scope; an AC was rewritten with no record | spec `tier`, git diff over time, report artifact line, `ac_weakened` count |
+| V-18 | Traceable delivery | Bind completed work to an accepted revision and bounded private evidence | Missing delivery revision or unbounded duplicate evidence | Delivery receipt |
 
 **How to use**
 
@@ -170,7 +176,7 @@ Use [`references/backlog.md`](references/backlog.md).
 
 1. Create an isolated workspace from the baseline commit (recommended: `git worktree add`).
 2. At dispatch, append the **complete command actually executed** to `.delegate/<TASK-ID>/dispatch.log`: at minimum the host / tool and entry point (e.g. `claude -p`, `codex exec`, a native host subagent), **all flags** (`--permission-mode`, `--allowedTools`, `--model`, `--output-format`, `--max-turns`, etc.), cwd / workspace path, baseline commit, and dispatch time. **Append, do not overwrite**; leave one entry for each dispatch or rework of the same task; **never write only "dispatched" or "engineer is running"**; **credentials (token / key / password) are never written to `dispatch.log`**—record only flags, paths, commits, and times.
-3. Hand the spec, engineer brief, read-only material list, and evidence write paths to the engineer.
+3. Register the assigned role, context policy and owner with the actual job/agent ID. Start a new implementation lineage once, then resume its explicit engineer session for follow-up and rework. Hand over only new requirements or failure evidence; use a sourced handoff only when resume is unavailable.
 4. Dispatch in the background, then **end the round**; wait for the host's completion callback.
 5. After waking, read only the final conclusion and evidence index, then proceed to verification.
 
@@ -190,7 +196,7 @@ Use [`references/verification-brief.md`](references/verification-brief.md) to di
 
 **Actions**:
 
-1. Start a verifier in a **new context**; it is forbidden to inherit the implementation conversation.
+1. Start each formal verifier in a **new context**, distinct from PM and implementation sessions. Provide requirements, baseline, exact delivery revision and necessary testing material. Do not fork or resume the implementation conversation.
 2. Create a brand-new read-only workspace or snapshot based on the engineer's delivered commit; using the directory the engineer is editing is forbidden.
 3. In the brief, list allowed tools, forbidden actions, commands that must be re-run, the AC list, and evidence requirements.
 4. The verifier re-runs each item, recording its own exit codes and output; it also checks cross-cutting items such as the violation table, scope, non-goals, credential leakage, and link validity.
@@ -226,10 +232,61 @@ The plain-language layer **does not need to explain exhaustively and does not in
 
 - Turn failed items into rework entries, linked to the original task ID and the verification evidence.
 - Fix the implementation or have the PM formally modify the spec; ACs may not be relaxed just to pass.
-- Commit a new commit in the same workspace and go through independent verification again; do not carry over the trust of the previous PASS.
+- Resume the original engineer session and workspace with the failed requirements and evidence. After repair, fix the new revision and use a fresh verifier; the previous PASS does not cover new changes.
 - Record the root cause of the failure; if the same kind of failure occurs three times in a row, stop and re-split the spec rather than continuing to pile on retries.
 
 **Exit condition**: Same as 4.4; verification after rework must use a new verification context.
+
+### 4.7 Process Weight: Tiers and a Budget
+
+**The point of process is to ship the work.** When the process itself becomes the deliverable,
+it has already failed. Every task declares its tier before dispatch.
+
+A **round** below means one dispatch → verification cycle (or, for `direct` tasks, one working session).
+
+| Tier | When | What still applies |
+|---|---|---|
+| `direct` | Estimated ≤ 30 minutes, reversible, internal | PM does it and self-checks. No spec, no dispatched engineer, no independent verifier. If it takes longer than claimed, re-tier it openly and record the actual cost. |
+| `standard` | Everything else | Full flow. Rework is allowed and must be justified (R3). |
+| `release` | Irreversible, public-facing, or touching credentials/money | Full flow + the quality floor in R3c + an explicit pre-flight checklist. |
+
+Non-negotiable rules:
+
+- **R1 — Every task binds to a user-visible artifact**: a command that runs, a file that opens,
+  a behavior that changes, **or a safety property that now holds and can be proven by a command**
+  (refactor, added tests, migration). A task with no provable artifact is not a task — but "it is only
+  an internal refactor" is not an exemption: it still needs a proof command.
+- **R2 — Tier it.** One line in the spec: `tier: direct | standard | release`. Unmarked defaults to `standard`.
+- **R3 — Rework is gated by evidence, not by a counter.** There is **no hard cap**; a cap teaches the PM to
+  accept mediocre work. Every rework states three things: **(a)** what failed — an AC ID **or** an explicit
+  trigger from §4.6 (boss rejection, scope change, newly discovered risk); **(b)** why it is a defect rather
+  than a preference; **(c)** expected user-visible gain vs. the cost of another round.
+- **R3a — Repeated failure triggers diagnosis, not a weaker AC.** Distinguish implementation, environment and specification errors. Keep the AC when implementation is wrong. Amend it only when the requirement itself is wrong or the Boss changes it.
+  The rewrite is recorded in `.delegate/<TASK-ID>/ac-changes.md` with five fields: **(1)** AC id, **(2)** old text,
+  **(3)** new text, **(4)** direction — `tightened` or `broadened`, **(5)** reason. A rewrite with no entry is a V-11
+  violation. `broadened` entries are additionally counted as `ac_weakened` (R8). `release` tasks also need the Boss's
+  explicit acknowledgement.
+- **R3b — Preferences never block — unless they are violations or blocking defects.** Anything that is neither
+  a failed AC, nor a §3 violation, nor a **blocking defect** goes to `nice-to-have.md` and ships later.
+  *Not* preferences, and therefore able to FAIL: scope creep, credential leaks, fabricated evidence (§3),
+  plus **data loss, privilege escalation, and irreversible side effects** (blocking defects).
+- **R3c — The quality floor cannot be simplified away.** For `release`: all ACs pass **and** a user-visible smoke
+  check **and** an empty list of known-severe defects — see [`references/release-checklist.md`](references/release-checklist.md).
+- **R4 — Preserve continuity.** Do not replace the engineer or PM to reset a counter. Handoff when needed for context, interruption or ownership changes. Reuse verification of an unchanged revision; changed code or new evidence may require a fresh check.
+- **R5 — Verification judges the ACs *and* the protocol-level checks.** The violation table (§3), scope,
+  credentials and link integrity stay in force at verification time. Preferences cannot cause a FAIL; violations can.
+- **R6 — Progress is measured in changes**, not in documents. Every report names what changed (files/behavior)
+  and which artifact proves it.
+- **R7 — Audit the ratio, not the counters.** The signal to cut process is a round where documentation/process
+  output clearly outweighs artifact change. Lots of artifacts *and* lots of rework is not a process problem —
+  investigate implementation, environment and specification before deciding what to change.
+- **R8 — Track the real quality signal: weakened ACs.** Every AC rewrite is recorded per task
+  (`ac_weakened` in the backlog entry) and reviewed at each version boundary. Rework count says little;
+  a rising AC-weakening count means quality is sliding.
+
+**Exit condition**: the artifact exists and the report names the command that proves it. For `direct` tasks the
+self-check command is enough; for `standard`/`release` the independent verification must also pass, and `release`
+must satisfy [`references/release-checklist.md`](references/release-checklist.md).
 
 ### State machine
 
@@ -238,14 +295,52 @@ The plain-language layer **does not need to explain exhaustively and does not in
 | `intake` | The Boss gives intent | `spec-ready`, `blocked` |
 | `spec-ready` | All ACs are decidable | `scheduled`, `blocked` |
 | `scheduled` | The backlog has an ID and dependencies are satisfied | `dispatched`, `blocked` |
-| `dispatched` | Isolated workspace and brief are ready | `verifying`, `blocked` |
-| `verifying` | Engineer delivers commit + evidence | `rework`, `reported` |
+| `dispatched` | A registered engineer actually started | `awaiting-verification`, `blocked` |
+| `awaiting-verification` | Engineer delivered a fixed revision; no verifier running yet | `verifying`, `blocked` |
+| `verifying` | A fresh verifier actually started on that revision | `rework`, `reported`, `blocked` |
 | `rework` | Verification FAIL or an explicit change | `dispatched`, `blocked` |
 | `reported` | One-pager + evidence index | `done`, `rework` |
-| `done` | The Boss accepts and independent verification PASSes | Terminal state (a new task may be opened) |
+| `done` | The Boss accepts; standard/release have independent PASS, direct work is explicitly labelled self-checked | Terminal state (a new task may be opened) |
 | `blocked` | A clear blocking reason and owner | Return to the state before blocking |
 
 ---
+
+### 4.8 Delivery Gate: what "done" has to survive
+
+Resource limits are diagnostic checks. Integration and workspace retirement require an explicit project process.
+
+Process rot is measurable — but numbers are easy to game, so the gate separates **hard failures**
+from **warnings**, and requires the hard one that actually matters: **a ticket marked `done` must point at a commit**.
+
+```bash
+python3 scripts/guard.py     # exit 0 = no hard failure
+```
+
+Hard failures — nine checks, they block `done`:
+
+| Check | Limit | Why |
+|---|---|---|
+| `probe` | ok | If `git` cannot be read, the gate fails closed |
+| `deliverable` | 0 tickets | For every `done` ticket: `TASK.md` declares `delivery_scope` + `proof_command`; `RECEIPT.md` names `result_commit` + `accepted_by`; that commit exists, is on `main`, carries `Task-ID: <ID>`, touches **only** files inside `delivery_scope`, and is not claimed by another ticket |
+| `delegate_size` | ≤ 2 GB | Worktrees and evidence accumulate silently |
+| `worktrees` | ≤ 3 | Bound the active workspace set |
+| `state_size` | ≤ 10 KB | Keep status concise |
+| `evidence_files` / `evidence_size` | ≤ 20 files / 5 MB per task | Arithmetic, not diligence — but archive, never delete the only copy |
+| `sessions_today` | ≤ 10 | Opening windows is not a fix |
+| `open_tickets` | ≤ 3 | Bound concurrent work |
+
+Warnings — two checks, they never block:
+
+| Check | Limit | Why |
+|---|---|---|
+| `commit_age` / `last_commit` | 24 h | A hint that the day produced nothing — but a clock cannot judge a long-running task, and empty commits would make it lie |
+
+**Exceptions.** A hard failure can be waived only through `.delegate/guard-exceptions.json`
+with `owner`, `reason` and an `expires` date. An expired or incomplete entry is ignored.
+Exceptions are visible in the gate output — never a verbal waiver.
+
+**Why not "a commit every 24 hours".** That rule rewards empty commits and punishes honest long tasks.
+The rule that survives scrutiny is narrower: **every finished ticket names its commit.**
 
 ## 5. Context Hygiene
 
@@ -294,7 +389,7 @@ A handoff is not "saying something"; it is **writing the state needed to continu
 
 ### 6.1 Engineer cross-phase handoff
 
-**Solves**: How to continue implementation losslessly within the same task when the engineer changes phase, is stopped, runs out of context, or is replaced.
+**Solves**: Preserve the implementation lineage when an actual session transfer is necessary. Normal phase changes and rework resume the explicit engineer session. They do not require a new handoff or a new engineer.
 
 **Must state clearly**:
 
@@ -334,7 +429,7 @@ Template: [`references/pm-handoff.md`](references/pm-handoff.md).
 | Dimension | Engineer handoff | PM shift change |
 |---|---|---|
 | Object | The implementer of the same task | The next-shift PM / a new PM context |
-| Trigger | Phase switch, stop, insufficient context, replacement | Context threshold, end of shift, long-running task |
+| Trigger | Resume unavailable, ownership change, or necessary context transfer | Context threshold, end of shift, long-running task |
 | Content | Code state, commands, failure evidence, unfinished items | Intent, schedule, decisions, risks, evidence index |
 | Does not include | Redefining ACs | Engineer-level implementation details |
 | Success criterion | The successor can continue implementation and reproduce tests | The successor can continue making decisions without losing context |
@@ -426,9 +521,13 @@ When using this protocol for the first time, complete the following in order:
 - [ ] Use [`references/verification-brief.md`](references/verification-brief.md) to dispatch independent verification, requiring the commands to be re-run.
 - [ ] Use [`references/report-template.md`](references/report-template.md) to give the Boss a one-page conclusion.
 - [ ] Hand off before the context threshold using [`references/handoff.md`](references/handoff.md) or [`references/pm-handoff.md`](references/pm-handoff.md).
-- [ ] Mark the task `done` only after independent verification PASSes and the Boss accepts.
+- [ ] For standard/release work, mark `done` only after independent PASS and Boss acceptance. Direct work must state that it was self-checked, not independently verified.
 
 ---
+
+## Local resource closure
+
+After independent acceptance, the PM integrates the exact reviewed delta and verifies the combined workspace. Then use the installed `scripts/shipboss-resources.py` to inventory, plan, archive, release and check close. A PASS is not a released workspace. An exact working-tree manifest can record `integrated-uncommitted` when no new commit was authorized. Unintegrated work can be retired as `archived-not-integrated` only after verified restoration; retain its original refs. See [resource lifecycle](references/resource-lifecycle.md) for executable commands and local support limits. Paused or unknown owners remain protected; native continuation stays with the same verified session.
 
 ## 11. File Map
 

@@ -1,13 +1,28 @@
 #!/usr/bin/env bash
-# SHIPBOSS installer — copies the protocol kit into ./.shipboss/
-# It never edits your project. It only creates one directory.
+# SHIPBOSS installer — protocol kit plus offline observer entry.
+# No host hooks, network installation or login items.
 set -eu
 
 SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-DEST="${1:-./.shipboss}"
+DEST="./.shipboss"
 FORCE=0
-[ "${2:-}" = "--force" ] && FORCE=1
-[ "${1:-}" = "--force" ] && { FORCE=1; DEST="./.shipboss"; }
+OBSERVER_ARGS=(--project "$PWD")
+DEST_SET=0
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --force) FORCE=1; shift ;;
+    --with-observer|--no-start) OBSERVER_ARGS+=("$1"); shift ;;
+    --observer-home|--renderer-dist|--electron-binary|--project)
+      [ "$#" -ge 2 ] || { echo "缺少参数：$1" >&2; exit 2; }
+      OBSERVER_ARGS+=("$1" "$2"); shift 2 ;;
+    --help)
+      echo 'Usage: bash install.sh [DEST] [--force] [--with-observer] [--observer-home HOME] [--renderer-dist DIR] [--electron-binary FILE] [--no-start] [--project ROOT]'
+      exit 0 ;;
+    --*) echo "未知选项：$1" >&2; exit 2 ;;
+    *) [ "$DEST_SET" -eq 0 ] || { echo '只接受一个安装目录' >&2; exit 2; }
+       DEST="$1"; DEST_SET=1; shift ;;
+  esac
+done
 
 banner() {
   if [ -f "$SRC/docs/welcome.txt" ]; then
@@ -28,29 +43,7 @@ echo
 echo "安装到：$DEST"
 echo
 
-mkdir -p "$DEST"
-copied=0
-copy() {
-  [ -e "$SRC/$1" ] || return 0
-  mkdir -p "$DEST/$(dirname "$1")"
-  cp -R "$SRC/$1" "$DEST/$1"
-  copied=$((copied+1))
-}
+ENTRY="$SRC/apps/observer/scripts/observer-install.py"
+[ -f "$ENTRY" ] || ENTRY="$SRC/scripts/observer-install.py"
+exec python3 "$ENTRY" --skill-source "$SRC" --destination "$DEST" "${OBSERVER_ARGS[@]}"
 
-echo "[1/3] 复制协议主体 ..."
-for f in PROTOCOL.md PROTOCOL.zh-CN.md; do copy "$f"; done
-
-echo "[2/3] 复制平台适配与模板 ..."
-for d in platforms references; do [ -d "$SRC/$d" ] && copy "$d"; done
-copy docs
-
-echo "[3/3] 复制 README 与许可证 ..."
-for f in README.md README.zh-CN.md LICENSE verify.sh .gitignore; do copy "$f"; done
-
-echo
-echo "完成。共复制 $copied 项到 $DEST"
-echo
-echo "下一步：把 $DEST/PROTOCOL.md 交给你的 agent，"
-echo "然后告诉它你要做什么。剩下的它会按协议办。"
-echo
-echo "自检：bash \"$DEST/verify.sh\""

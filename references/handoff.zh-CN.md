@@ -2,7 +2,7 @@
 
 [English](handoff.md) | [中文](handoff.zh-CN.md)
 
-> 用途：同一工单内，工程师换阶段、被停止、上下文不足或换人时，把可继续实现的状态写到磁盘。**交接完成不代表验收通过。** 协议见 [`../PROTOCOL.md`](../PROTOCOL.zh-CN.md)。PM 换班是另一件事，见 [`pm-handoff.md`](pm-handoff.zh-CN.md)。
+> 用途：同一任务默认续接原工程师 session；确需转移上下文、换人或无法续接时才用此模板，不在每个阶段重置工程师。**交接完成不代表验收通过。** 协议见 [`../PROTOCOL.md`](../PROTOCOL.zh-CN.md)。PM 换班是另一件事，见 [`pm-handoff.md`](pm-handoff.zh-CN.md)。
 
 ---
 
@@ -18,7 +18,9 @@
 | 当前 commit | `<sha>` |
 | 分支 | `<branch>` |
 | 工作区绝对路径 | `<path>` |
-| 交接原因 | 阶段切换 / 被停止 / 上下文不足 / 换人 |
+| 工程师链路 / 原 session | `<lineage>` / `<session-id>` |
+| 接续 session / 交接来源 | `<session-id>` / `<path>` |
+| 交接原因 | 无法续接 / 必要上下文转移 / 换人 |
 | 交接时间（UTC） | `<timestamp>` |
 | 交接人 / 接手人 | `<id>` / `<id>` |
 

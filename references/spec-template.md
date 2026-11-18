@@ -23,6 +23,9 @@
 - baseline commit: `<sha>`
 - Stack: `<stack / runtime / package manager>`
 - Test command: `<command>`
+- Delivery scope: `<paths this ticket may touch; no wildcard covering the repo>`
+- Proof command: `<command that proves the AC, run on the delivery commit>`
+- Tier: `direct | standard | release` (see PROTOCOL §4.7; unmarked = `standard`)
 - Workspace: `<worktree-path-or-rule>`
 - Read-only source material: `<paths>`
 - Dispatch command record: `.delegate/<TASK-ID>/dispatch.log`

@@ -29,6 +29,19 @@
 
 **Conclusion**: `PASS` / `FAIL` / `BLOCKED` (subject to the independent verification conclusion; the engineer's self-assessment does not substitute for it)
 
+## A0. Delivery fingerprint (required before `done`)
+
+Write `.delegate/<TASK-ID>/RECEIPT.md`:
+
+```markdown
+- result_commit: <sha of the delivery commit, message must contain `Task-ID: <TASK-ID>`>
+- accepted_by: <verifier id>
+- checks: `<proof command>` → <actual output summary>
+```
+
+The gate checks: the commit exists, is on `main`, carries the exact `Task-ID`, touches only
+`delivery_scope`, and is not claimed by another ticket.
+
 ## A1. What changed (one sentence per file)
 
 | File | One-sentence description |
@@ -37,6 +50,8 @@
 | `<path>` | <what was done, and why> |
 | `<path>` | <what was done, and why> |
 
+- Artifact: `<what the boss can run / open / see>`
+- Proof command: `<exact command> → expected output`
 - Delivery commit: `<sha>`
 - baseline commit: `<sha>`
 - Branch / workspace: `<branch>` / `<path>`

@@ -23,6 +23,9 @@
 - baseline commit：`<sha>`
 - 技术栈：`<stack / runtime / package manager>`
 - 测试命令：`<command>`
+- 交付范围（delivery_scope）：`<本单允许改动的路径；禁止覆盖全仓的通配>`
+- 证明命令（proof_command）：`<在交付 commit 上跑，能证明 AC 的命令>`
+- 档位（tier）：`direct | standard | release`（见 PROTOCOL §4.7；未标注 = `standard`）
 - 工作区：`<worktree-path-or-rule>`
 - 只读源材料：`<paths>`
 - 派发命令留痕：`.delegate/<TASK-ID>/dispatch.log`

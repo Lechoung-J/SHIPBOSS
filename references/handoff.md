@@ -2,7 +2,7 @@
 
 [English](handoff.md) | [中文](handoff.zh-CN.md)
 
-> Purpose: Within the same task, when the engineer switches stages, is stopped, lacks context, or is replaced, write the state that lets implementation continue to disk. **Completing a handoff does not mean acceptance passed.** Protocol: [`../PROTOCOL.md`](../PROTOCOL.md). A PM shift change is a different matter; see [`pm-handoff.md`](pm-handoff.md).
+> Purpose: Resume the same engineer session by default. Use this template only when context or ownership actually transfers, or the host cannot resume; do not reset the engineer at each phase. **Completing a handoff does not mean acceptance passed.** Protocol: [`../PROTOCOL.md`](../PROTOCOL.md). A PM shift change is a different matter; see [`pm-handoff.md`](pm-handoff.md).
 
 ---
 
@@ -18,7 +18,9 @@
 | Current commit | `<sha>` |
 | Branch | `<branch>` |
 | Absolute workspace path | `<path>` |
-| Handoff reason | Stage switch / stopped / insufficient context / replacement |
+| Engineer lineage / previous session | `<lineage>` / `<session-id>` |
+| Successor session / handoff source | `<session-id>` / `<path>` |
+| Handoff reason | Resume unavailable / necessary context transfer / replacement |
 | Handoff time (UTC) | `<timestamp>` |
 | Handing over / taking over | `<id>` / `<id>` |
 

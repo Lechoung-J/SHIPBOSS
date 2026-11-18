@@ -9,7 +9,7 @@
 <p align="center">
   <a href="https://github.com/Lechoung-J/SHIPBOSS/releases"><img alt="version" src="https://img.shields.io/badge/version-v0.1.0-2b3a55"></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-2b3a55"></a>
-  <img alt="docs" src="https://img.shields.io/badge/docs-%E7%BA%AF%20Markdown-2b3a55">
+  <img alt="docs" src="https://img.shields.io/badge/docs-Markdown%20%E5%8D%8F%E8%AE%AE-2b3a55">
   <img alt="agents" src="https://img.shields.io/badge/%E6%94%AF%E6%8C%81-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20DSH-2b3a55">
 </p>
 
@@ -31,6 +31,12 @@
 【**你雇了个员工，结果自己坐进了工位。**】
 
 ---
+
+你不必一直盯着，也能随时像玩策略游戏一样，看见每个 AI 员工在做什么。可选的本地观察窗把项目画成房间。PM 在整理任务，工程师在写代码，验收员在独立检查。角色旁的气泡显示读文件、修改或跑测试等状态。扫一眼，就知道该看哪里。
+
+![观察窗整体演示：多个项目房间与角色状态](docs/observer-overview.png)
+
+*演示画面：项目、任务和工具目标均为示例。*
 
 ## 市面上有两种方案，我们都不做
 
@@ -72,9 +78,10 @@
 
 ---
 
-## 然后把电脑合上
+## 然后去做别的事
 
-开启这个流程、把想法告诉产品经理之后，你不需要坐在桌前。
+把想法告诉产品经理，让会话和运行环境保持运行。
+你就可以先去做别的事。
 
 去做杯咖啡。收个快递。跟同事聊两句。
 
@@ -88,7 +95,7 @@
 需要你决定：无
 ```
 
-【**你不在的时候，活没停。你回来的时候，只需要点头或摇头。**】
+【**把执行交给团队，把有证据的决定留给自己。**】
 
 ---
 
@@ -106,13 +113,14 @@ bash verify.sh          # 确认你拿到的这套东西是完整的
 - [`platforms/`](platforms/) —— 你的 agent 怎么派活、怎么等、什么做不到
 - 第一张单照着 [`references/spec-template.md`](references/spec-template.zh-CN.md) 这份**工单模板**抄；
   每张单都要有一张**验收清单**（逐条能打勾，不能写「体验更好」）
-- 七份 `references/` 模板目前是中文，英文版在后续版本补上
+- 核心模板提供中英文本；按你的宿主选择对应说明。
+- 可选观察窗的依赖、安装、升级和实际支持条件见[详细安装说明（English）](docs/observer-install.md)。
 
 > 可选：首次会话里，agent 可以打印一次 [`docs/welcome.txt`](docs/welcome.txt)——
 > 跟安装脚本显示的是同一块字。放进一个代码块，每个会话只打一次。
 
-> 说清一件事：**这个仓库交付的是「规矩」，不是「装好就能用的产品」。**
-> 把规矩交给你的 agent（或对应平台的 skill），它才会成为那个产品经理。
+> **核心是一套可独立使用的 Markdown 协议。** 把协议或对应 Skill 交给 agent，它就按产品经理的职责工作。
+> 想看团队状态，再按安装说明启用可选的本地 macOS 观察窗。
 
 ---
 
@@ -120,7 +128,7 @@ bash verify.sh          # 确认你拿到的这套东西是完整的
 
 - **不是更聪明的 AI。** 它不提升模型能力，它只让含糊的交付过不去。
 - **不是一堆角色的编排框架。** 三个人，一张纸，一个老板。
-- **不是让你学一套新工具。** 纯 Markdown，不装运行时，不接管编辑器。
+- **不是让你学一套新工具。** 核心协议用 Markdown 阅读即可。可选观察窗另需本地依赖，不接管编辑器。
 
 ---
 
@@ -141,4 +149,4 @@ bash verify.sh          # 确认你拿到的这套东西是完整的
 
 ---
 
-[English](README.md) | [中文](README.zh-CN.md) · MIT · 纯 Markdown
+[English](README.md) | [中文](README.zh-CN.md) · MIT · Markdown 协议 + 可选观察窗

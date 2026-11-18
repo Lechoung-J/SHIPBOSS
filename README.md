@@ -9,7 +9,7 @@
 <p align="center">
   <a href="https://github.com/Lechoung-J/SHIPBOSS/releases"><img alt="version" src="https://img.shields.io/badge/version-v0.1.0-2b3a55"></a>
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-2b3a55"></a>
-  <img alt="docs" src="https://img.shields.io/badge/docs-plain%20Markdown-2b3a55">
+  <img alt="docs" src="https://img.shields.io/badge/docs-Markdown%20protocol-2b3a55">
   <img alt="agents" src="https://img.shields.io/badge/works%20with-Claude%20Code%20%C2%B7%20Codex%20%C2%B7%20DSH-2b3a55">
 </p>
 
@@ -31,6 +31,12 @@ You hired an AI to write code. Somehow you got busier:
 **You hired an employee and ended up sitting in the chair yourself.**
 
 ---
+
+You do not need to watch constantly. When you want to, you can see your AI employees work as if you were looking at a strategy game. The optional local observer turns projects into rooms: the PM organizes tasks, engineers build, and a verifier checks independently. Activity bubbles show reading, editing, or testing, so a glance tells you where to look.
+
+![Observer overview demo: project rooms and role states](docs/observer-overview.png)
+
+*Demo scene: projects, tasks, and tool targets are examples.*
 
 ## Two things everyone else is selling. We're not selling either.
 
@@ -71,9 +77,10 @@ It's not "write code faster." It's **delegation with a gate**:
 
 ---
 
-## Then close the laptop
+## Then go do something else
 
-Start the flow, tell the PM what you want, and walk away.
+Tell the PM what you want and keep the session and execution environment running.
+Then go do something else.
 
 Make coffee. Take a delivery. Talk to a human.
 
@@ -87,7 +94,7 @@ Risk: this one thing wasn't tested, because …
 Needs you: nothing
 ```
 
-**The work didn't stop while you were gone. You just have to nod or shake your head.**
+**Leave execution with the team. Come back to an evidence-backed decision.**
 
 ---
 
@@ -104,13 +111,14 @@ Then hand these to your AI coding agent:
 - [`PROTOCOL.md`](PROTOCOL.md) — how the four roles work together, what counts as done, and which behaviors are violations on sight
 - [`platforms/`](platforms/) — how to dispatch on Claude Code, Codex, or DSH, what each host cannot do, and how to wait for completion
 - Start your first ticket from [`references/spec-template.md`](references/spec-template.md). Every ticket needs an acceptance checklist — items you can tick, never "better UX"
-- The seven `references/` templates are still Chinese-only; English versions come in a later release
+- Core templates are available in English and Chinese; choose the adapter for your host.
+- For optional observer dependencies, installation, upgrades, and support conditions, read [the complete installation guide](docs/observer-install.md).
 
 > Optional: on the first session, your agent can print [`docs/welcome.txt`](docs/welcome.txt) once —
 > the same banner the installer shows. One fenced code block, once per session.
 
-> To be clear about what this is: **this repo ships the rules, not an installed product.**
-> Hand the rules to your agent (or the skill for your platform) and *that* becomes your PM.
+> **The core is a Markdown protocol you can use on its own.** Hand it, or the corresponding Skill, to your agent to define the PM role.
+> If you want to see team status, follow the guide to enable the optional local macOS observer.
 
 ---
 
@@ -118,7 +126,7 @@ Then hand these to your AI coding agent:
 
 - **Not a smarter AI.** It doesn't improve the model; it makes vague handoffs fail.
 - **Not another multi-agent orchestration framework.** Three roles, one page, one boss.
-- **Not a new tool to learn.** Plain Markdown. No runtime, no account, no editor takeover.
+- **Not a new tool to learn.** Read the core protocol as Markdown. The optional observer has separate local dependencies and does not take over your editor.
 
 ---
 
@@ -139,4 +147,4 @@ Then hand these to your AI coding agent:
 
 ---
 
-[English](README.md) | [中文](README.zh-CN.md) · MIT · Plain Markdown
+[English](README.md) | [中文](README.zh-CN.md) · MIT · Markdown protocol + optional observer

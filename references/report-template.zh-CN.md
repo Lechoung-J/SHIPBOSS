@@ -29,6 +29,18 @@
 
 **结论**：`PASS` / `FAIL` / `BLOCKED`（以独立验收结论为准，不以工程师自评代替）
 
+## A0. 交付指纹（标 `done` 前必须写）
+
+写 `.delegate/<TASK-ID>/RECEIPT.md`：
+
+```markdown
+- result_commit: <交付 commit 的 sha；该提交信息必须含 `Task-ID: <工单号>`>
+- accepted_by: <验收员 id>
+- checks: `<证明命令>` → <实际输出摘要>
+```
+
+闸门会查：提交存在、进了 `main`、尾注是本单号、改动不超出 `delivery_scope`、且未被其它工单认领。
+
 ## A1. 改了什么（每个文件一句话）
 
 | 文件 | 一句话说明 |
@@ -37,6 +49,8 @@
 | `<path>` | <做了什么，为什么> |
 | `<path>` | <做了什么，为什么> |
 
+- 产物：`<老板能跑 / 能打开 / 能看到的东西>`
+- 证明命令：`<确切命令>` → 预期输出
 - 交付 commit：`<sha>`
 - baseline commit：`<sha>`
 - 分支 / 工作区：`<branch>` / `<path>`

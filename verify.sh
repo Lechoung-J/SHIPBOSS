@@ -28,6 +28,11 @@ check_file() {
 }
 
 for f in \
+  SKILL.md \
+  scripts/observer.sh \
+  scripts/observer-bootstrap.py \
+  scripts/shipboss-resources.py \
+  PUBLIC-FILES.json \
   README.md \
   PROTOCOL.md \
   LICENSE \
@@ -56,6 +61,24 @@ elif grep -qF 'README.zh-CN.md' README.md 2>/dev/null; then
 else
   skip "README.zh-CN.md 本发布未提供（可选双语版本）"
 fi
+
+# The same content binding applies to source and installed complete kits.
+if python3 - <<'PY'
+import hashlib, json
+from pathlib import Path, PurePosixPath
+root = Path.cwd()
+manifest = json.loads((root / 'PUBLIC-FILES.json').read_text())
+for item in manifest['files']:
+    name = item['path']; relative = PurePosixPath(name)
+    if relative.is_absolute() or '..' in relative.parts or name == 'PUBLIC-FILES.json':
+        raise SystemExit('invalid manifest path')
+    path = root / name
+    if any(p.is_symlink() for p in (path, *path.parents)) or hashlib.sha256(path.read_bytes()).hexdigest() != item['sha256']:
+        raise SystemExit('manifest digest mismatch: ' + name)
+if 'name: shipboss' not in (root / 'SKILL.md').read_text():
+    raise SystemExit('Shipboss Skill identity missing')
+PY
+then pass 'Skill identity and exact file digests verified'; else fail 'Skill manifest verification failed'; fi
 
 # ---------- 2. 平台文件结构 ----------
 echo

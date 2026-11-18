@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' ws://127.0.0.1:* http://127.0.0.1:*; object-src 'none'; base-uri 'none'; form-action 'none'" />
+  <meta name="theme-color" content="#c9c5b9" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='m16 3 12 7v13l-12 7L4 23V10L16 3Zm0 14v13M4 10l12 7 12-7' fill='none' stroke='%236f563c' stroke-width='2'/%3E%3C/svg%3E" />
+  <title>SHIPBOSS · 工作室地图</title>
+</head>
+<body>
+  <main id="observer" aria-label="SHIPBOSS 多项目等轴地图">
+    <section id="viewport" aria-label="左键拖动平移，滚轮缩放的办公室地图">
+      <div id="canvas-host"></div>
+      <div id="scene-error" hidden></div>
+    </section>
+    <div class="window-grip" title="拖动这里移动窗口" aria-label="移动窗口"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M6 5h0M12 5h0M6 9h0M12 9h0M6 13h0M12 13h0"/></svg></div>
+    <div class="map-controls" aria-label="窗口控制">
+      <button id="reset-camera" class="icon-button" aria-label="回到第一个房间" title="回到第一个房间"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m10 2 7 4v8l-7 4-7-4V6l7-4ZM3 6l7 4 7-4M10 10v8"/></svg></button>
+      <button id="pin-window" class="icon-button" aria-label="置顶观察窗" aria-pressed="false" title="置顶观察窗"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m7 3 6 0-1 5 3 3H5l3-3-1-5ZM10 11v6"/></svg></button>
+      <button id="expand-window" class="icon-button" aria-label="展开观察窗" aria-pressed="false" title="展开窗口，看更多房间"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12 3h5v5M17 3l-6 6M8 17H3v-5m0 5 6-6"/></svg></button>
+      <button id="hide-window" class="icon-button" aria-label="收进菜单栏" title="收进菜单栏"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10h10"/></svg></button>
+    </div>
+    <div id="floor-tooltip" role="tooltip" hidden><strong></strong><span></span></div>
+    <span class="demo-tag">演示</span>
+    <button id="collection-fallback" class="collection-fallback collection-ui" type="button">收纳柜</button>
+    <section id="collection-panel" class="collection-panel collection-ui" role="dialog" aria-labelledby="collection-title" hidden>
+      <header><div><div class="eyebrow">地图偏好</div><h2 id="collection-title">房间收纳柜</h2></div><button id="collection-close" class="icon-button" type="button" aria-label="关闭收纳柜">×</button></header>
+      <p class="collection-help">收纳只影响这张地图，不会暂停或更改后台任务。</p>
+      <div id="collection-list" class="collection-list" role="list" aria-label="已收纳房间"></div>
+      <p id="collection-empty" class="collection-empty" role="status" aria-live="polite" hidden></p>
+      <button id="collection-restore-all" class="collection-restore-all" type="button">全部恢复</button>
+    </section>
+    <div id="room-context-menu" class="room-context-menu collection-ui" role="menu" hidden>
+      <strong id="room-context-title"></strong>
+      <button id="collect-room" type="button" role="menuitem">收纳房间</button>
+    </div>
+    <section id="info-sheet" class="info-sheet" hidden aria-label="项目与任务详情">
+      <header><div><div id="sheet-eyebrow" class="eyebrow"></div><h1 id="sheet-title"></h1></div><button id="close-sheet" class="icon-button" aria-label="关闭详情">×</button></header>
+      <div id="sheet-content"></div>
+      <div class="sheet-foot">假数据演示 · 在原 Session 中回答问题</div>
+    </section>
+    <div id="widget-loading"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="m16 3 12 7v13l-12 7L4 23V10L16 3Zm0 14v13M4 10l12 7 12-7"/></svg><span>打开工作室…</span></div>
+    <div id="toast" role="status" hidden></div>
+    <p class="sr-only" id="map-status" aria-live="polite">三个项目各有一间办公室。</p>
+  </main>
+  <script type="module" src="/src/widget.js"></script>
+</body>
+</html>

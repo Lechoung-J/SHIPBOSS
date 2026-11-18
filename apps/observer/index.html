@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#cecdc5" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%23293b46'/%3E%3Cpath d='m20 7 12 7v13l-12 7L8 27V14L20 7Zm0 14v13M8 14l12 7 12-7' fill='none' stroke='%23dfbd83' stroke-width='2'/%3E%3C/svg%3E" />
+    <meta name="description" content="SHIPBOSS 等轴办公室概念演示。观察任务从派发到独立验收的过程。" />
+    <title>SHIPBOSS — 工作室观察窗</title>
+  </head>
+  <body>
+    <main id="app">
+      <div id="scene" aria-label="可旋转的三维等轴办公室"></div>
+      <div id="scene-labels"></div>
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="SHIPBOSS 工作室"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="m16 3 12 7v13l-12 7L4 23V10L16 3Z" stroke="currentColor" stroke-width="2"/><path d="m4 10 12 7 12-7M16 17v13M10 7l12 7v7l-6 3" stroke="currentColor" stroke-width="2"/></svg><span>SHIPBOSS</span><span class="brand-divider"></span><span class="brand-caption">工作室</span></a>
+        <div class="top-meta"><span class="demo-badge">概念演示 · 假数据</span><span class="edition">STUDY 03 / CONCRETE & WALNUT</span></div>
+      </header>
+      <section class="scene-intro" aria-live="polite">
+        <div class="eyebrow"><span class="live-dot"></span> TEAM OBSERVATORY</div>
+        <h1 id="scene-heading">先从产品经理开始。</h1>
+        <p id="scene-subtitle">消息到达。PM 进门、排任务，文件先堆在他的收件槽。</p>
+      </section>
+      <aside class="room-note"><span class="note-rule"></span><span>验收有回音，工作有下文。<br/>一轮完成，再安排下一轮。</span></aside>
+      <div class="view-tools" aria-label="视角控制">
+        <button id="rotate-left" title="向左旋转视角" aria-label="向左旋转视角">↶</button>
+        <button id="reset-view" title="恢复默认等轴视角" aria-label="恢复默认等轴视角"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 3 8 5v8l-8 5-8-5V8l8-5Z M4 8l8 5 8-5 M12 13v8" stroke="currentColor" stroke-width="1.5"/></svg></button>
+        <button id="rotate-right" title="向右旋转视角" aria-label="向右旋转视角">↷</button>
+        <span class="tool-separator"></span>
+        <button id="zoom-in" title="拉近" aria-label="拉近">+</button>
+        <button id="zoom-out" title="拉远" aria-label="拉远">−</button>
+      </div>
+      <aside id="detail-panel" class="detail-panel" hidden aria-label="工位与交付详情">
+        <button id="close-detail" class="close-detail" aria-label="关闭详情">×</button>
+        <div class="eyebrow" id="detail-eyebrow">WORKSTATION 01</div>
+        <h2 id="detail-title">产品经理</h2>
+        <p class="detail-description" id="detail-description"></p>
+        <div class="detail-meta"><span>当前任务</span><strong>EXAMPLE-031 · 观察窗原型</strong></div>
+        <div class="detail-meta"><span>当前阶段</span><strong id="detail-state"></strong></div>
+        <div id="detail-report" hidden></div>
+        <p class="detail-footnote">演示数据 · 只读观察</p>
+      </aside>
+      <div id="hover-hint" class="hover-hint" hidden></div>
+      <footer class="playback">
+        <div class="playback-top"><div><span class="task-id">EXAMPLE-031</span><span class="task-name">观察窗原型</span></div><span class="playback-caption" id="playback-caption">点击阶段预览</span></div>
+        <div class="playback-bottom">
+          <button id="toggle-play" class="play-toggle" aria-label="自动播放演示"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6 4.5v11L15 10 6 4.5Z"/></svg></button>
+          <div class="steps" aria-label="演示阶段">
+            <button class="step active" data-stage="0" aria-pressed="true"><span class="step-number">01</span><span>派发</span><i></i></button>
+            <button class="step" data-stage="1" aria-pressed="false"><span class="step-number">02</span><span>实现</span><i></i></button>
+            <button class="step" data-stage="2" aria-pressed="false"><span class="step-number">03</span><span>验收</span><i></i></button>
+            <button class="step" data-stage="3" aria-pressed="false"><span class="step-number">04</span><span>PM 复核</span><i></i></button>
+            <button class="step" data-stage="4" aria-pressed="false"><span class="step-number">05</span><span>待命</span><i></i></button>
+          </div>
+        </div>
+      </footer>
+      <div class="bottom-hints"><span>拖动旋转 · 滚轮缩放 · 点选工位</span><span>THREE.JS / M0</span></div>
+      <div id="loading"><div class="loading-mark">S</div><span>正在打开工作室…</span></div>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

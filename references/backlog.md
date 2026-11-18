@@ -16,6 +16,9 @@
 | `priority` | Yes | `P0` (blocking) / `P1` (current) / `P2` (queued) / `P3` (deferrable). |
 | `status` | Yes | See the status definitions in section 2. |
 | `spec` | Yes | Spec path and version/commit. |
+| `tier` | yes | `direct` / `standard` / `release`; see PROTOCOL §4.7. Unmarked = `standard`. |
+| `attempts` | no | Number of dispatch → verification rounds actually spent. |
+| `ac_weakened` | no | How many ACs were rewritten/relaxed (each must have a recorded reason; see R8). |
 | `ac_count` | No | Number of ACs, to help check whether they are decidable. |
 | `dependencies` | Yes | IDs of dependent tasks; write `none` if there are none. |
 | `owner` | Yes | Current owner (PM/engineer). |
@@ -44,6 +47,14 @@
 | `blocked` | Paused | Specific reason, owner, and unblock condition exist | Return to the pre-blocked state |
 
 **Only an independent verification PASS can enter `reported`/`done`.** The engineer's self-report cannot advance the status.
+
+## 2.5 `nice-to-have.md` (preferences that never block)
+
+- **Location**: `.delegate/nice-to-have.md` (project level, gitignored like the rest of `.delegate/`).
+- **Owner**: the PM. Only the PM writes to it.
+- **When it is consumed**: at **version planning** — the PM proposes which items to promote into real tickets.
+  An item that survives two version cycles without being promoted is dropped (and the drop is recorded).
+- **Hard rule**: nothing in this file can cause a FAIL; conversely, nothing in §3 of PROTOCOL can be parked here.
 
 ## 3. Scheduling rules
 
@@ -94,6 +105,22 @@ intake
       -> PASS: one-pager report -> reported
   -> boss accepts -> done
 ```
+
+## 5.5 Process audit (R7 / R8 triggers)
+
+Run this at every version boundary, and whenever a round feels heavy. **These are triggers for a review,
+not counters that forbid work** — a fixed number must never decide quality (see R3/R7).
+
+| Signal | Trigger (review, not ban) | What the review may decide |
+|---|---|---|
+| Documentation/process output vs artifact change | more than 2 process artifacts (spec, brief, verdict, handoff) per 1 shipped artifact change | merge steps that add nothing; **never** drop an artifact that V-4 or the verification brief requires |
+| `ac_weakened` per task (only `broadened` rewrites count) | ≥ 2 | rewrite the ACs before dispatching again — the spec, not the code, is the suspect |
+| `attempts` per task | ≥ 3 | consider re-splitting the task; record why the previous splits failed |
+
+Notes:
+
+- None of these may be enforced as an automatic stop; the PM decides after review.
+- "Cut process" never means deleting a required safety artifact (verification brief, tool whitelist, evidence).
 
 ## 6. Scheduling self-check
 
